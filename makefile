@@ -1,8 +1,8 @@
-OBJ = main.o sound.o screen.o
+OBJ = main.o sound.o screen.o comm.o
 APPNAME = wave.a
 
 $(APPNAME) : $(OBJ)
-	gcc -o $(APPNAME) $(OBJ) -lm
+	gcc -o $(APPNAME) $(OBJ) -lm -lcurl
 
 %.o : %.c
 	gcc -c -o $@ $< -std=c99
