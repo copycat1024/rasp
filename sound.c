@@ -107,12 +107,12 @@ void dispWAVdata(short int* s){
 		}
 #else
 		displayBar(i+3,rms200,60,20);
-		rms8Hz[i/size8Hz] += rms200;
+		rms8Hz[i/size8Hz] += sum200;
 #endif
 	}
 #ifndef DEBUG
 	for (j=0; j<8; j++){
-		sprintf(midata,"%9.2lf;",sqrt(rms8Hz[j]/size8Hz));
+		sprintf(midata,"%9.2lf;",sqrt(rms8Hz[j]/SAMPLE_RATE/8));
 		strcat(data,midata);
 	}
 	gotoXY(2,2);
