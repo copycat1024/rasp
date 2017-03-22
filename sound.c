@@ -2,8 +2,11 @@
 #include <math.h>
 #include "sound.h"
 #include "screen.h"
+#include "comm.h"
+#include <string.h>
 
-#define RESS 200
+#define RESS 80
+
 
 void print4ch(char* c){
 	printf("%c%c%c%c\n",c[0],c[1],c[2],c[3]);
@@ -73,21 +76,47 @@ void dispWAVHDR(WAVHDR h){
 }
 
 void dispWAVdata(short int* s){
-	int i,j;
+	int i,j,size8Hz,size200;
 	double sum200, rms200;
+	double rms8Hz[8];
+	char midata[20];
+	char data[200] = "data=";
+	size8Hz = RESS/8;
+	size200 = SAMPLE_RATE/RESS;
+#ifndef DEBUG
+	for (j=0; j<8; j++){
+		rms8Hz[j]=0.0;
+	}
+#endif
 	for (i=0; i<RESS; i++){
 		sum200 = 0.0;
-		for (j=0; j<SAMPLE_RATE/RESS; j++){
+		for (j=0; j<size200; j++){
 			sum200 += (*s)*(*s);
 			s++;
 		}
-		rms200 = sqrt(sum200/SAMPLE_RATE*RESS);
-
+		rms200 = sqrt(sum200/size200);
 #ifdef DEBUG
 		printf("%3d: %10.2f",i,rms200);
 		if (i%10==9) printf("\n");
+		if ((i+1)%size8Hz != 0) {
+			rms8Hz += rms200;
+		} else {
+			sprintf(data,"data=%f",rms8Hz/size8Hz);
+			printf("\n %s %d %d\n",data,size8Hz,(i+1)%size8Hz);
+			rms8Hz[i/size8Hz] = 0.0;
+		}
 #else
 		displayBar(i+3,rms200,60,20);
+		rms8Hz[i/size8Hz] += rms200;
 #endif
 	}
+#ifndef DEBUG
+	for (j=0; j<8; j++){
+		sprintf(midata,"%9.2lf;",sqrt(rms8Hz[j]/size8Hz));
+		strcat(data,midata);
+	}
+	gotoXY(2,2);
+	send_post(SERVER_URL,data);
+#endif
+
 }
