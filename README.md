@@ -7,8 +7,9 @@
  Table of content
   1. Confguration Instruction
   2. Installation Instruction
-...
+  ...
 
+--------------------------------
  1. Configuration Instruction
 
  This section contains 2 part: hardware configuration and software configuration
