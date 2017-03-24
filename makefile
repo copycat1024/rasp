@@ -15,3 +15,11 @@ archive :
 
 send :
 	scp sound.tar e1601116@shell.puv.fi:.
+
+git :
+	git add *.c
+	git commit -m "Added C source code"
+	git add *.h
+	git commit -m "Added C header file"
+#	git add makefile
+#	git commit -m "Added makefile"
