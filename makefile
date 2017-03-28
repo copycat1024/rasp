@@ -2,7 +2,7 @@ OBJ = main.o sound.o screen.o comm.o
 APPNAME = wave.a
 
 $(APPNAME) : $(OBJ)
-	gcc -o $(APPNAME) $(OBJ) -lm -lcurl
+	gcc -o $(APPNAME) $(OBJ) -lm -lcurl -lpthread
 
 %.o : %.c
 	gcc -c -o $@ $< -std=c99
