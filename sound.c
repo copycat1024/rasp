@@ -75,12 +75,12 @@ void dispWAVHDR(WAVHDR h){
 #endif
 }
 
-void dispWAVdata(short int* s){
+void dispWAVdata(short int* s, char* name){
 	int i,j,size8Hz,size200;
 	double sum200, rms200;
 	double rms8Hz[8];
 	char midata[20];
-	char data[200] = "data=";
+	char data[200];
 	size8Hz = RESS/8;
 	size200 = SAMPLE_RATE/RESS;
 #ifndef DEBUG
@@ -93,24 +93,18 @@ void dispWAVdata(short int* s){
 		for (j=0; j<size200; j++){
 			sum200 += (*s)*(*s);
 			s++;
+
 		}
 		rms200 = sqrt(sum200/size200);
 #ifdef DEBUG
-		printf("%3d: %10.2f",i,rms200);
-		if (i%10==9) printf("\n");
-		if ((i+1)%size8Hz != 0) {
-			rms8Hz += rms200;
-		} else {
-			sprintf(data,"data=%f",rms8Hz/size8Hz);
-			printf("\n %s %d %d\n",data,size8Hz,(i+1)%size8Hz);
-			rms8Hz[i/size8Hz] = 0.0;
-		}
+		printf("%lf\n",rms200);
 #else
 		displayBar(i+3,rms200,60,20);
 		rms8Hz[i/size8Hz] += sum200;
 #endif
 	}
 #ifndef DEBUG
+	sprintf(data,"name=%s&data=",name);
 	for (j=0; j<8; j++){
 		sprintf(midata,"%9.2lf;",sqrt(rms8Hz[j]/SAMPLE_RATE/8));
 		strcat(data,midata);

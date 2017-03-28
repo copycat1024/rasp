@@ -36,7 +36,7 @@ int main(int argc, char *argv[]){
 		fread(&hdr,sizeof(hdr),1,f);
 		dispWAVHDR(hdr);
 		fread(&sa, sizeof(short int), SAMPLE_RATE, f);
-		dispWAVdata(sa);
+		dispWAVdata(sa,"iolaPi");
 		fclose(f);
 	}
 
