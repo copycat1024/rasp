@@ -4,46 +4,67 @@
 #include <sys/wait.h>
 #include "screen.h"
 #include <stdlib.h>
+#include <pthread.h>
+
+
+void* record_sound();
+void* process_sound();
+int ret;
+
+typedef struct{
+	FILE* f;
+	WAVHDR* hdr;
+	short int* sa;
+} process_arg;
 
 int main(int argc, char *argv[]){
-	WAVHDR hdr;
-	FILE* f;
-	char c;
-	short int sa[SAMPLE_RATE];
-	int ret;
 
-/*	if (argc<2) {
-		printf("Usage: %s wav_file\n",argv[0]);
-		return -1;
-	}
-	f = fopen(argv[1], "r");
-	if (f == NULL) {
-		printf("Cannnot open wav file %s\n", argv[1]);
-		return -1;
-	} */
+	int toggle = 0;
+	pthread_t thread1, thread2;
+	int  iret1, iret2;
+	process_arg arg;
+	int i=10;
 
-	while (1){
-		gotoXY(1,1);
-		ret = system("arecord -q -r16000 -c1 -d1 -f S16_LE data.wav");
+	while (i){
+		clrscr();
+		iret1 = pthread_create( &thread1, NULL, record_sound, NULL);
+		if(iret1) {
+			fprintf(stderr,"Error - pthread_create() return code: %d\n",iret1);
+			exit(EXIT_FAILURE);
+		}
+		if (toggle != 0) {
+			iret2 = pthread_create( &thread2, NULL, process_sound, (void*) &arg);
+			if(iret2) {
+				fprintf(stderr,"Error - pthread_create() return code: %d\n",iret2);
+				exit(EXIT_FAILURE);
+			}
+//			pthread_join(thread2, NULL);
+		} else {
+			toggle = 1;
+		}
+		pthread_join(thread1, NULL);
+		system("cp data.wav data1.wav");
 		if (WIFSIGNALED(ret) && WTERMSIG(ret)==SIGINT) {
 			clrscr();
 			break;
 		}
-#ifndef DEBUG
-	    clrscr();
-#endif
-		f = fopen("data.wav", "r");
-		fread(&hdr,sizeof(hdr),1,f);
-		dispWAVHDR(hdr);
-		fread(&sa, sizeof(short int), SAMPLE_RATE, f);
-		dispWAVdata(sa,"iolaPi");
-		fclose(f);
+
 	}
-
-
-/*	printf("Do you want to generate a testone? (y for yes, others for no)");
-	scanf("%c",&c);
-	if (c=='y') testTone(1000, 5); */
-
 	return 0;
+}
+
+void* process_sound(void* arg){
+	FILE* f;
+	WAVHDR hdr;
+	short int sa[SAMPLE_RATE];
+	f = fopen("data1.wav", "r");
+	fread(&hdr,sizeof(hdr),1,f);
+	dispWAVHDR(hdr);
+	fread(sa, sizeof(short int), SAMPLE_RATE, f);
+	dispWAVdata(sa,"iolaPi");
+	fclose(f);
+}
+
+void* record_sound(){
+	ret = system("arecord -q -r16000 -c1 -d1 -f S16_LE data.wav");
 }
