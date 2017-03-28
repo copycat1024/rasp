@@ -34,5 +34,5 @@ typedef struct{
 // Function prototypes
 
 void dispWAVHDR(WAVHDR);
-void dispWAVdata(short int*);
+void dispWAVdata(short int*, char*);
 void testTone(int, double);
