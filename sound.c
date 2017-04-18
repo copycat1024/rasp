@@ -48,6 +48,7 @@ void testTone(int f, double d){
 }
 
 void dispWAVHDR(WAVHDR h){
+//	clrscr();
 	double duration;
 #ifdef DEBUG
 	printf("Chunk ID:        "); print4ch(h.ChunkID);
@@ -103,14 +104,12 @@ void dispWAVdata(short int* s, char* name){
 		rms8Hz[i/size8Hz] += sum200;
 #endif
 	}
-#ifndef DEBUG
 	sprintf(data,"name=%s&data=",name);
 	for (j=0; j<8; j++){
 		sprintf(midata,"%9.2lf;",sqrt(rms8Hz[j]/SAMPLE_RATE/8));
 		strcat(data,midata);
 	}
 	gotoXY(2,2);
+	printf("Respond:");
 	send_post(SERVER_URL,data);
-#endif
-
 }

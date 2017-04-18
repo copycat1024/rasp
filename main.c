@@ -9,7 +9,6 @@
 
 void* record_sound();
 void* process_sound();
-int ret;
 
 typedef struct{
 	FILE* f;
@@ -23,22 +22,21 @@ int main(int argc, char *argv[]){
 	pthread_t thread1, thread2;
 	int  iret1, iret2;
 	process_arg arg;
-	int i=10;
+	int ret;
 
-	while (i){
-		clrscr();
-		iret1 = pthread_create( &thread1, NULL, record_sound, NULL);
+	while (1){
+		iret1 = pthread_create( &thread1, NULL, record_sound, (void*) &ret);
 		if(iret1) {
 			fprintf(stderr,"Error - pthread_create() return code: %d\n",iret1);
 			exit(EXIT_FAILURE);
 		}
 		if (toggle != 0) {
-			iret2 = pthread_create( &thread2, NULL, process_sound, (void*) &arg);
+			iret2 = pthread_create( &thread2, NULL, process_sound, NULL);
 			if(iret2) {
 				fprintf(stderr,"Error - pthread_create() return code: %d\n",iret2);
 				exit(EXIT_FAILURE);
 			}
-//			pthread_join(thread2, NULL);
+			pthread_join(thread2, NULL);
 		} else {
 			toggle = 1;
 		}
@@ -65,6 +63,10 @@ void* process_sound(void* arg){
 	fclose(f);
 }
 
-void* record_sound(){
+void* record_sound(void* arg){
+	clrscr();
+	int ret, *ar;
 	ret = system("arecord -q -r16000 -c1 -d1 -f S16_LE data.wav");
+	ar = (int*) arg;
+	*ar=ret;
 }
