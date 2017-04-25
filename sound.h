@@ -30,6 +30,8 @@ typedef struct{
 
 #define SAMPLE_RATE 16000
 #define PI 3.14159265359
+// set if in debug mode
+// #define DEBUG 0
 
 // Function prototypes
 
