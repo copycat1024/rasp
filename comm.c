@@ -2,6 +2,7 @@
 #include <curl/curl.h>
 #include "comm.h"
 
+// function to send post data to server
 void send_post(char* url, char* post_data) {
     CURL *curl;
     CURLcode res;

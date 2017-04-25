@@ -19,6 +19,7 @@ void fill4ch(char* c2, char* c1) {
 	c2[3] = c1[3];
 }
 
+// function to create test wav
 void testTone(int f, double d){
 	WAVHDR h;
 	FILE* fh;
@@ -47,6 +48,7 @@ void testTone(int f, double d){
 	printf("Test tone ready!\n");
 }
 
+// function to display wav header data
 void dispWAVHDR(WAVHDR h){
 //	clrscr();
 	double duration;
@@ -76,6 +78,7 @@ void dispWAVHDR(WAVHDR h){
 #endif
 }
 
+// function to display wav sound data and send data to server
 void dispWAVdata(short int* s, char* name){
 	int i,j,size8Hz,size200;
 	double sum200, rms200;
@@ -89,6 +92,7 @@ void dispWAVdata(short int* s, char* name){
 		rms8Hz[j]=0.0;
 	}
 #endif
+	//calculate rms
 	for (i=0; i<RESS; i++){
 		sum200 = 0.0;
 		for (j=0; j<size200; j++){
@@ -104,6 +108,7 @@ void dispWAVdata(short int* s, char* name){
 		rms8Hz[i/size8Hz] += sum200;
 #endif
 	}
+	//prepare post data to send to server
 	sprintf(data,"name=%s&data=",name);
 	for (j=0; j<8; j++){
 		sprintf(midata,"%9.2lf;",sqrt(rms8Hz[j]/SAMPLE_RATE/8));

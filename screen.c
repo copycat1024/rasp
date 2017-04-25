@@ -2,25 +2,30 @@
 #include <stdio.h>
 
 // function definition
+// set height/signal strength ratio
 int levelize(int i, int lim, int lev){
 	return i/(lim/lev);
 }
 
+//set foreground color
 void setFGcolor(int color){
 	printf("\033[%d;1m", color);
 	fflush(stdout);
 }
 
+//reset color
 void resetcolor(void){
 	printf("\033[0m");
 	fflush(stdout);
 }
 
+//go to (x,y) point on the screen
 void gotoXY(int x, int y){
 	printf("\033[%d;%dH",y,x);
 	fflush(stdout);
 }
 
+//display a bar on screen
 void displayBar(int col, double rms, int lim, int reso){
 	int i,j,fl = 0,l;
 
@@ -43,6 +48,7 @@ void displayBar(int col, double rms, int lim, int reso){
 	fflush(stdout);
 }
 
+//clear screen
 void clrscr(){
 	printf("\033[2J");
 	fflush(stdout);
