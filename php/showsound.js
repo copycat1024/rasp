@@ -51,7 +51,6 @@ function chart_config() {
 }
 
 function chart_draw(data) {
-	console_debug(data);
 	if (time_stamp < data.key) {
 		add_data(data.data);
 		time_stamp = data.key;
@@ -110,14 +109,6 @@ function change_device(name) {
 	chart_clear();
 }
 
-function console_debug(data) {
-	var b = gebi("console");
-	var str = JSON.stringify(data).concat("<br />");
-	for (var i=0; i<chart_data.length; i++) {
-		str = str.concat(i.toString()," - ", chart_data[i].y.toString(), "<br />");
-	}
-	b.innerHTML = str;
-}
 
 function set_status(status) {
 	var a=$("#status");
@@ -179,8 +170,10 @@ function load_review() {
 	url = url.concat(cursor.toString());
 	var jqxhr = $.getJSON(url, function(data) {
 		$("#time").text(data.key);
-		console_debug(data.data);		
-		chart_data = data.data;
+		chart_data.splice(chart_data,chart_data.length)		
+		for (i=0;i<8;i++) {
+			chart_data.push(data.data[i]);
+		}
 		chart_wrapper.render();
 		console.log( "success" );
 	})
